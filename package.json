@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "resend": "^4.3.0",
+    "validator": "^13.15.0"
+  },
+  "name": "spendify-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
