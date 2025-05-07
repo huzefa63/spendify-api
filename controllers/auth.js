@@ -46,5 +46,14 @@ export const handleLoginUser = catchAsync(async (req,res,next) => {
 
 export const handleLogoutUser = (req,res,next) => {
   if(!req.cookies.jwt) return next(new AppError('you are not logged in',401));
-  res.clearCookie('jwt').status(200).json({status:"success"});
+  res
+    .clearCookie("jwt", {
+      maxAge: rememberMe * 60 * 60 * 1000,
+      secure: true,
+      path: "/",
+      httpOnly: true,
+      sameSite: "none",
+    })
+    .status(200)
+    .json({ status: "success" });
 }
