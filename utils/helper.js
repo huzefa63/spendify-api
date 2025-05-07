@@ -13,6 +13,7 @@ export const createJwtAndSendCookie = (res,cookieName,rememberMe,statusCode,resO
   res.cookie(cookieName,token,{
     maxAge: rememberMe * 60 * 60 * 1000,
     secure:true,
+    path:'/',
     httpOnly:true,
     sameSite:'none'
   }).status(statusCode).json(resObject);
