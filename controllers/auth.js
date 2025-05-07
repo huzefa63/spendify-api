@@ -30,6 +30,7 @@ export const protectRoute = catchAsync(async (req, res, next) => {
 });
 
 export const handleLoginUser = catchAsync(async (req,res,next) => {
+  console.log('from login auth', req.body);
   if(!req?.body?.email || !req?.body?.password) return next(new AppError('email or password is missing',400));
   const {email,password,rememberMe} = req?.body;
 

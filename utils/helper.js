@@ -14,5 +14,6 @@ export const createJwtAndSendCookie = (res,cookieName,rememberMe,statusCode,resO
     expires:new Date(Date.now() + rememberMe * 24 * 60 * 60 * 1000),
     secure:true,
     httpOnly:true,
+    sameSite:'none'
   }).status(statusCode).json(process.env.ENVIROMENT ==='production' ? resObject:{token});
 }
