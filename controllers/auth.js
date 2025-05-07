@@ -4,7 +4,7 @@ import util from 'util';
 import catchAsync from "../utils/catchAsync.js";
 import User from '../models/user.js';
 import AppError from '../utils/appError.js';
-import { createJwt, createJwtAndSendCookie } from "../utils/helper.js";
+import { createJwtAndSendCookie } from "../utils/helper.js";
 
 export const protectRoute = catchAsync(async (req, res, next) => {
     const cookie = req.cookies.jwt;
@@ -39,14 +39,8 @@ export const handleLoginUser = catchAsync(async (req,res,next) => {
   // check user password
  
   if(!user ||  !await user.checkPassword(password,user.password)) return next(new AppError('email or password is incorrect',400));
-  const jwt = createJwt(user._id,30);
-  // createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
-  res.cookie('jwt',jwt,{
-    expires:new Date(Date.now() + 30 *60*60*1000),
-    secure:true,
-    httpOnly:true,
-    sameSite:'none',
-  }).status(200).json({status:'success'});
+  
+  createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
 
 })
 

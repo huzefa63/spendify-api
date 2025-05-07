@@ -18,7 +18,7 @@ const app = express();
 
 // required middlewares
 app.use(
-  cors({ origin: "https://spendify-53.vercel.app", credentials: true })
+  cors({ origin: process.env.URL, credentials: true })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
