@@ -5,21 +5,49 @@ config({ path: "./.env" });
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
 // custom imports
 import userRoutes from "./routes/user.js";
-import expenseRoutes from "./routes/expense.js";
+import transactionRoutes from "./routes/transaction.js";
+import authRoutes from "./routes/auth.js";
 import globalErrorHandler from "./controllers/error.js";
+import Transaction from './models/transaction.js';
+import { faker } from "@faker-js/faker";
 
 const app = express();
+
 // required middlewares
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({ origin: "https://spendify-53.vercel.app", credentials: true })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+const categories = [
+  "Food",
+  "Transport",
+  "Utilities",
+  "Entertainment",
+  "Health",
+  "Other",
+];
+const titles = [
+  "Groceries",
+  "Bus Ticket",
+  "Electric Bill",
+  "Movie",
+  "Doctor Visit",
+  "Random Purchase",
+];
+
 // Routes
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/expenses", expenseRoutes);
+app.use("/api/v1/expenses", transactionRoutes);
+app.use("/api/v1/auth", authRoutes);
+
+
+
 
 // global error handler
 app.use(globalErrorHandler);

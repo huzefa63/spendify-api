@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const schema = new mongoose.Schema({
-  date: {
+  createdAt: {
     type: Date,
     required: true,
     default: new Date(),
@@ -20,6 +20,10 @@ const schema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
+    required: [true, "user id is required"],
+  },
+  transactionType:{
+    type: String,
     required: [true, "user id is required"],
   },
   note: {
