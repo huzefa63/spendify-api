@@ -1,7 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import User from "../models/user.js";
 import AppError from "../utils/appError.js";
-import { createJwtAndSendCookie } from "../utils/helper.js";
+import { createJwt, createJwtAndSendCookie } from "../utils/helper.js";
 import multer, { memoryStorage } from "multer";
 import sharp from "sharp";
 import cloudinary from "../utils/cloudinary.js";
