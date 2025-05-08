@@ -65,7 +65,9 @@ export const CreateUser = catchAsync(async (req, res, next) => {
   const { rememberMe } = req.body;
   delete req.body.role;
   const user = await User.create(req.body);
-  createJwtAndSendCookie(res, "jwt", rememberMe ? 30:7, 201, { user,status:'success' }, user._id);
+  // createJwtAndSendCookie(res, "jwt", rememberMe ? 30:7, 201, { user,status:'success' }, user._id);
+  const token = createJwt(user._id,rememberMe?30:7);
+    res.status(200).json({status:'success',token});
 });
 
 export const UpdateUser = catchAsync(async (req, res, next) => {

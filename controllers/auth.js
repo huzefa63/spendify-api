@@ -4,10 +4,11 @@ import util from 'util';
 import catchAsync from "../utils/catchAsync.js";
 import User from '../models/user.js';
 import AppError from '../utils/appError.js';
-import { createJwtAndSendCookie } from "../utils/helper.js";
+import { createJwt, createJwtAndSendCookie } from "../utils/helper.js";
 
 export const protectRoute = catchAsync(async (req, res, next) => {
-    const cookie = req.cookies.jwt;
+    const cookie = req.headers.authorization?.split(" ")[1];
+
    
     // console.log(req.cookies);
     // check if cookie is there
@@ -40,14 +41,9 @@ export const handleLoginUser = catchAsync(async (req,res,next) => {
  
   if(!user ||  !await user.checkPassword(password,user.password)) return next(new AppError('email or password is incorrect',400));
   
-  createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
-  // res.cookie('jwt','12345678',{
-  //   httpOnly:true,
-  //   secure:true,
-  //   sameSite:'none',
-  //   path:'/',
-  //   maxAge:30 * 24 * 60 * 60 * 1000,
-  // }).status(200).json({status:'success'});
+  // createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
+  const token = createJwt(user._id,rememberMe?30:7);
+  res.status(200).json({status:'success',token});
 
 })
 
