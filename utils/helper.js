@@ -15,6 +15,6 @@ export const createJwtAndSendCookie = (res,cookieName,rememberMe,statusCode,resO
     secure:true,
     path:'/',
     httpOnly:true,
-    sameSite:'none'
+    sameSite:'None'
   }).status(statusCode).json(resObject);
 }
