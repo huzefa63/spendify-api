@@ -40,7 +40,14 @@ export const handleLoginUser = catchAsync(async (req,res,next) => {
  
   if(!user ||  !await user.checkPassword(password,user.password)) return next(new AppError('email or password is incorrect',400));
   
-  createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
+  // createJwtAndSendCookie(res,'jwt',rememberMe ? 30 : 7,200,{status:'success'},user._id);
+  res.cookie('jwt','12345678',{
+    httpOnly:true,
+    secure:true,
+    sameSite:'none',
+    path:'/',
+    maxAge:30 * 24 * 60 * 60 * 1000,
+  }).status(200).json({status:'success'});
 
 })
 
