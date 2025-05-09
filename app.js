@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.js";
 import transactionRoutes from "./routes/transaction.js";
 import authRoutes from "./routes/auth.js";
+import categoriesRoutes from "./routes/categories.js";
 import globalErrorHandler from "./controllers/error.js";
 import Transaction from './models/transaction.js';
 import { faker } from "@faker-js/faker";
@@ -45,7 +46,7 @@ const titles = [
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/expenses", transactionRoutes);
 app.use("/api/v1/auth", authRoutes);
-
+app.use("/api/v1/categories",categoriesRoutes);
 
 
 

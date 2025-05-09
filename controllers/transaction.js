@@ -67,8 +67,13 @@ console.log('transaction')
   if(transactionType) filterObj.transactionType = transactionType;
 
   const totalDoc = await Transaction.countDocuments(filterObj);
-  const transaction = await Transaction.find(filterObj).skip(skip).limit(pageSize);
-  
+  let transaction;
+
+  if(!amount) transaction = await Transaction.find(filterObj).skip(skip).limit(pageSize);
+  if(amount){
+    const sortAmount = amount === 'low-to-high' ? 1 : -1;
+     transaction = await Transaction.find(filterObj).sort({amount:sortAmount}).skip(skip).limit(pageSize);
+  }
   
   
   res
