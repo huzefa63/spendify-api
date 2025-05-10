@@ -50,6 +50,9 @@ app.use("/api/v1/categories",categoriesRoutes);
 
 
 
+
+
+
 // global error handler
 app.use(globalErrorHandler);
 

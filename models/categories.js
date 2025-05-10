@@ -6,14 +6,13 @@ const schema = new mongoose.Schema({
     required: true,
     default: new Date(),
   },
-  name: {
+  categoryName: {
     type: String,
     required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique:true
   },
 });
 

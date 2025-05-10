@@ -21,6 +21,7 @@ export const upload = multer({
 });
 
 export const resizeImage = catchAsync(async (req, res, next) => {
+  console.log(req.body)
   if (!req.file) return next();
 
   const fileName = `user-${req.user._id}-${Date.now()}.jpeg`;
@@ -56,7 +57,7 @@ export const resizeImage = catchAsync(async (req, res, next) => {
 
 export const getUser = catchAsync(async (req, res, next) => {
 console.log('hello there')
-  res.status(200).json({userName:req.user.userName,profileImage:req.user.profileImage || ''})
+  res.status(200).json({userName:req.user.userName,profileImage:req.user.profileImage || '',email:req.user.email});
  
 });
 
@@ -74,6 +75,7 @@ export const UpdateUser = catchAsync(async (req, res, next) => {
   const {password, email, passwordConfirm, role, ...filteredBody} = req.body;
   
   if (req.file) filteredBody.profileImage = req.body.image_url;
+  console.log('filter');
   const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
     new: true,
     runValidators: true,

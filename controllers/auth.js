@@ -8,7 +8,6 @@ import { createJwt, createJwtAndSendCookie } from "../utils/helper.js";
 
 export const protectRoute = catchAsync(async (req, res, next) => {
     const cookie = req.headers.authorization?.split(" ")[1];
-
    
     // console.log(req.cookies);
     // check if cookie is there
@@ -24,7 +23,7 @@ export const protectRoute = catchAsync(async (req, res, next) => {
     // check if user changed password after token was issued
     if(user.changedPasswordAt){
         const passwordChangedAt = parseInt(user.changedPasswordAt.getTime()/1000,10);
-        if(passwordChangedAt > decoded.iat) return next(new AppError("you are not logged in, please login", 401));
+        if(passwordChangedAt > decoded.iat) return next(new AppError("you have recently changed password, please login", 401));
     }
     req.user = user;
     next();
