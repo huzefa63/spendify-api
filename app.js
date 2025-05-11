@@ -44,7 +44,7 @@ const titles = [
 
 // Routes
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/expenses", transactionRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories",categoriesRoutes);
 

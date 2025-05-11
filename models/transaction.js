@@ -4,7 +4,7 @@ const schema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    default: new Date(),
+    // default: new Date(),
   },
   amount: {
     type: Number,
@@ -30,7 +30,7 @@ const schema = new mongoose.Schema({
     type:String,
     default:'',
   },
-});
+},{timestamps:true});
 
 const model = mongoose.model('Expense',schema);
 export default model;
