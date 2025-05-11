@@ -47,7 +47,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories",categoriesRoutes);
-
+app.use("/", (req, res) => res.send("🟢 Backend is alive! ✅"));
 
 
 
