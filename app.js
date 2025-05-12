@@ -1360,4 +1360,10 @@ app.use("/", (req, res) => res.send("🟢 Backend is alive! ✅"));
 // global error handler
 app.use(globalErrorHandler);
 
+// const url =
+//   "https://res.cloudinary.com/dkqsfm61z/image/upload/v1746969581/spendify-user-profile-image/user-6820a35b99b4dc152f8fb6d2-1746969580196.jpeg.jpg";
+
+//   console.log(url.split('upload/')[1].split('.')[0]);
+
+
 export default app;

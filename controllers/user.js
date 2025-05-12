@@ -29,7 +29,7 @@ export const resizeImage = catchAsync(async (req, res, next) => {
   const resizedBuffer = await sharp(req.file.buffer)
     .resize(500, 500)
     .toFormat("jpeg")
-    .jpeg({ quality: 90 })
+    // .jpeg({ quality: 90 })
     .toBuffer();
 
   const readableBuffer = new Readable();
@@ -78,7 +78,6 @@ export const UpdateUser = catchAsync(async (req, res, next) => {
   console.log('filter');
   const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
     new: true,
-    runValidators: true,
   });
   res.status(200).json({ status: "success", updatedUser });
 });
@@ -89,4 +88,19 @@ export const DeleteUser = catchAsync(async (req, res, next) => {
 });
 
 
-
+export const deleteProfileImage = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({profileImage:req.body.imageUrl});
+  if(!user) return next(new AppError("you don't own this image",400));
+  console.log(user)
+  const publicId = req.body.imageUrl.split('upload/')[1].split('.')[0].split('/').slice(1).join('/');
+  // console.log(publicId)
+  const response = await cloudinary.uploader.destroy(
+    "spendify-user-profile-image/user-6820a35b99b4dc152f8fb6d2-1747047026970.jpeg",
+    { invalidate: true }
+  );
+  console.log(response)
+  if(response.result !== 'ok') return next(new AppError('failed to delete image',400));
+    user.profileImage = '';
+    await user.save();
+    return res.status(200).json({ status: "success" });
+});
