@@ -106,18 +106,18 @@ export const DeleteUser = catchAsync(async (req, res, next) => {
 
 
 export const deleteProfileImage = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({profileImage:req.body.imageUrl});
+  const user = await User.findById(req.user._id);
   if(!user) return next(new AppError("you don't own this image",400));
   console.log(user)
-  const publicId = req.body.imageUrl.split('upload/')[1].split('.')[0].split('/').slice(1).join('/');
-  // console.log(publicId)
-  const response = await cloudinary.uploader.destroy(
-    publicId,
+  const publicId = `${user?.profileImage?.split('upload/')[1]?.split('.')[0]?.split('/')?.slice(1)?.join('/')}.jpeg`;
+ 
+console.log(publicId+'.jpeg');
+  const response = await cloudinary.uploader.destroy(publicId,
     { invalidate: true }
   );
   console.log(response)
   if(response.result !== 'ok') return next(new AppError('failed to delete image',400));
     user.profileImage = '';
-    await user.save();
+    await user.save({validateBeforeSave:false});
     return res.status(200).json({ status: "success" });
 });
