@@ -3,7 +3,7 @@ import validator from "validator";
 import { hash,compare } from "bcryptjs";
 
 const schema = new mongoose.Schema({
-  userName: {
+  username: {
     type: String,
     required: true,
   },
@@ -30,6 +30,7 @@ const schema = new mongoose.Schema({
       message: "Passwords are not the same!",
     },
   },
+  changedPasswordAt:Date,
   profileImage: String,
   createdAt: {
     type: Date,
@@ -48,7 +49,9 @@ const schema = new mongoose.Schema({
 });
 
 schema.pre('save',async function(next){
-  if(!this.isModified('password') || !this.isNew) return next();
+  console.log('pre middleware');
+  if(!this.isModified('password')) return next();
+  console.log('after pre');
   const hashedPass = await hash(this.password,10);
   this.password = hashedPass;
   this.passwordConfirm = undefined;

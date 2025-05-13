@@ -8,6 +8,7 @@ import {
   resizeImage,
   getUser,
   deleteProfileImage,
+  updatePassword,
 } from "../controllers/user.js";
 import { protectRoute } from "../controllers/auth.js";
 
@@ -18,4 +19,5 @@ route.get("/getUser",protectRoute,getUser);
 route.patch("/updateUser",protectRoute,upload.single('photo'), resizeImage, UpdateUser);
 route.delete("/deleteUser",protectRoute,DeleteUser);
 route.delete('/profileImage',protectRoute,deleteProfileImage);
+route.patch("/updatePassword",protectRoute,updatePassword);
 export default route;

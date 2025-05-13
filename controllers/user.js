@@ -57,7 +57,7 @@ export const resizeImage = catchAsync(async (req, res, next) => {
 
 export const getUser = catchAsync(async (req, res, next) => {
 console.log('hello there')
-  res.status(200).json({userName:req.user.userName,profileImage:req.user.profileImage || '',email:req.user.email});
+  res.status(200).json({userName:req.user.username,profileImage:req.user.profileImage || '',email:req.user.email});
  
 });
 
@@ -75,11 +75,28 @@ export const UpdateUser = catchAsync(async (req, res, next) => {
   const {password, email, passwordConfirm, role, ...filteredBody} = req.body;
   
   if (req.file) filteredBody.profileImage = req.body.image_url;
-  console.log('filter');
+
   const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
     new: true,
+    runValidators:true
   });
   res.status(200).json({ status: "success", updatedUser });
+});
+
+export const updatePassword = catchAsync(async (req, res, next) => {
+  const {password,passwordConfirm} = req.body;
+  if (!password || !passwordConfirm) return next(new AppError('password is required to update it',400));
+
+  const user = await User.findById(req.user._id);
+  if(!user) return next(new AppError('user not found!',400));
+
+  // if(password !== passwordConfirm) return next(new AppError('passwords not equal'));
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  user.changedPasswordAt = Date.now();
+  user.save();
+  const jwt = createJwt(user._id,7);
+  res.status(200).json({ status: "passwordUpdated",jwt});
 });
 
 export const DeleteUser = catchAsync(async (req, res, next) => {
@@ -95,7 +112,7 @@ export const deleteProfileImage = catchAsync(async (req, res, next) => {
   const publicId = req.body.imageUrl.split('upload/')[1].split('.')[0].split('/').slice(1).join('/');
   // console.log(publicId)
   const response = await cloudinary.uploader.destroy(
-    "spendify-user-profile-image/user-6820a35b99b4dc152f8fb6d2-1747047026970.jpeg",
+    publicId,
     { invalidate: true }
   );
   console.log(response)
