@@ -30,7 +30,26 @@ const schema = new mongoose.Schema({
     type:String,
     default:'',
   },
+  year:String,
+  month:String,
+  monthNumber:Number
 },{timestamps:true});
 
-const model = mongoose.model('Expense',schema);
+schema.pre('save',function(next){
+  const month = ['jan','feb','march','april','may','june','july','aug','sep','oct','nov','dec'];
+  this.year = this.date.getFullYear()
+  this.month = month[this.date.getMonth()];
+  this.monthNumber = month.indexOf(this.month);
+  next();
+})
+
+schema.pre('findOneAndUpdate',function(next){
+  const month = ['jan','feb','march','april','may','june','july','aug','sep','oct','nov','dec'];
+  this.year = this.date.getFullYear()
+  this.month = month[this.date.getMonth()];
+  this.monthNumber = month.indexOf(this.month);
+  next();
+})
+
+const model = mongoose.model('Transaction',schema);
 export default model;

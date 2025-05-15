@@ -121,3 +121,44 @@ export const deleteTransaction = catchAsync(async (req, res, next) => {
   await Transaction.findByIdAndDelete(id);
   res.status(200).json({ status: "success" });
 });
+
+;
+export const getYearlyTransaction = catchAsync(async (req, res, next) => {
+  const {category,year = new Date().getFullYear()} = req.query;
+  console.log(req.query);
+  const startDate = new Date(Number(year),0,1);
+  const endDate = new Date(Number(year) + 1,0,1);
+  let filter = {
+    date:{$gte:startDate},
+    date:{$lt:endDate},
+    user:{$eq:req.user._id}
+  }
+  if(category) filter.category = {$eq:category};
+  const transactions = await Transaction.aggregate([
+    {
+      $match:filter
+    },
+    {
+      $group:{
+        _id:'$month',
+        monthNumber:{$first:'$monthNumber'},
+        Income:{
+          $sum:{
+            $cond:[{$eq:['$transactionType','income']},'$amount',0]
+          }
+        },
+        Expense:{
+          $sum:{
+            $cond:[{$eq:['$transactionType','expense']},'$amount',0]
+          }
+        }
+      },
+    },
+    {
+      $sort:{monthNumber:1}
+    }
+
+  ])
+  res.status(200).json({status:'success',transactions});
+
+});
