@@ -52,7 +52,7 @@ schema.pre('findOneAndUpdate', function (next) {
     
     update.year = date.getFullYear().toString();
     update.month = months[date.getMonth()];
-    update.monthNumber = date.getMonth() + 1; // 1-based (Jan = 1)
+    update.monthNumber = date.getMonth(); // 1-based (Jan = 1)
 
     // Reassign the updated fields
     this.setUpdate(update);
