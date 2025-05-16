@@ -2,7 +2,7 @@ import catchAsync from "../utils/catchAsync.js";
 import Transaction from "../models/transaction.js";
 import AppError from "../utils/appError.js";
 export const createTransaction = catchAsync(async (req, res, next) => {
-  const transaction = { ...req.body, user: req.user._id };
+  let transaction = { ...req.body, user: req.user._id };
   await Transaction.create(transaction);
   res.status(201).json({ status: "success" });
 });
@@ -122,43 +122,96 @@ export const deleteTransaction = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: "success" });
 });
 
-;
 export const getYearlyTransaction = catchAsync(async (req, res, next) => {
-  const {category,year = new Date().getFullYear()} = req.query;
+  const { category, year = new Date().getFullYear() } = req.query;
   console.log(req.query);
-  const startDate = new Date(Number(year),0,1);
-  const endDate = new Date(Number(year) + 1,0,1);
+  const startDate = new Date(Number(year), 0, 1);
+  const endDate = new Date(Number(year) + 1, 0, 1);
   let filter = {
-    date:{$gte:startDate},
-    date:{$lt:endDate},
-    user:{$eq:req.user._id}
-  }
-  if(category) filter.category = {$eq:category};
+    date: { $gte: startDate },
+    date: { $lt: endDate },
+    user: { $eq: req.user._id },
+  };
+  if (category) filter.category = { $eq: category };
   const transactions = await Transaction.aggregate([
+    {
+      $match: filter,
+    },
+    {
+      $group: {
+        _id: "$month",
+        monthNumber: { $first: "$monthNumber" },
+        Income: {
+          $sum: {
+            $cond: [{ $eq: ["$transactionType", "income"] }, "$amount", 0],
+          },
+        },
+        Expense: {
+          $sum: {
+            $cond: [{ $eq: ["$transactionType", "expense"] }, "$amount", 0],
+          },
+        },
+      },
+    },
+    {
+      $sort: { monthNumber: 1 },
+    },
+  ]);
+  res.status(200).json({ status: "success", transactions });
+});
+
+export const getFinancialStats = catchAsync(async (req, res, next) => {
+  const now = new Date();
+  // const {year = now.getFullYear().toString(),month = now.getMonth()} = req.query;
+  const {year = now.getFullYear().toString(),monthNumber} = req.query;
+  const user = req.user._id;
+  const filter = {
+    user:{$eq:user},
+    year:{$eq:year},
+  }
+    if(monthNumber && monthNumber !== 'fullYear') filter.monthNumber = {$eq:Number(monthNumber)}
+
+  const transactionFlow = await Transaction.aggregate([
     {
       $match:filter
     },
     {
       $group:{
-        _id:'$month',
-        monthNumber:{$first:'$monthNumber'},
-        Income:{
+        _id:'$user',
+        totalTransaction: {$sum:'$amount'},
+        income:{
           $sum:{
             $cond:[{$eq:['$transactionType','income']},'$amount',0]
           }
         },
-        Expense:{
+        expense:{
           $sum:{
             $cond:[{$eq:['$transactionType','expense']},'$amount',0]
           }
         }
-      },
+      }
+    }
+  ])
+  res.status(200).json({status:'success',transactionFlow})
+});
+
+export const getCategoryTransaction = catchAsync(async (req, res, next) => {
+  const {transactionType = 'income'} = req.query;
+  const transactions = await Transaction.aggregate([
+    {
+      $match:{user:req.user._id,transactionType:{$eq:transactionType}}
+    },
+    {
+      $group:{
+        _id:'$category',
+        monthNumber:{$first:'$monthNumber'},
+        totalAmount:{$sum:'$amount'}
+      }
     },
     {
       $sort:{monthNumber:1}
     }
-
   ])
-  res.status(200).json({status:'success',transactions});
+  res.status(200).json({ status: "success", transactions,transactionType });
 
 });
