@@ -29,6 +29,38 @@ export const protectRoute = catchAsync(async (req, res, next) => {
     next();
 });
 
+export const verifyToken = catchAsync(async (req, res, next) => {
+  const cookie = req.headers.authorization?.split(" ")[1];
+
+  // console.log(req.cookies);
+  // check if cookie is there
+  if (!cookie)
+    return next(new AppError("you are not logged in, please login", 401));
+
+  // if(!req.body.jwt) return next(new AppError('you are not logged in, please login',401)); // for development
+  const decoded = await util.promisify(jwt.verify)(
+    cookie,
+    process.env.JWT_SECRET
+  );
+
+  // check if user exists
+  const user = await User.findById(decoded.id);
+  if (!user) return next(new AppError("user not found", 401));
+
+  // check if user changed password after token was issued
+  if (user.changedPasswordAt) {
+    const passwordChangedAt = parseInt(
+      user.changedPasswordAt.getTime() / 1000,
+      10
+    );
+    if (passwordChangedAt > decoded.iat)
+      return next(
+        new AppError("you have recently changed password, please login", 401)
+      );
+  }
+ res.status(200).json({status:'verified'});
+});
+
 export const handleLoginUser = catchAsync(async (req,res,next) => {
   console.log('from login auth', req.body);
   if(!req?.body?.email || !req?.body?.password) return next(new AppError('email or password is missing',400));
