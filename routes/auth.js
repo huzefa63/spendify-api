@@ -6,5 +6,5 @@ const route = express.Router();
 
 route.post("/login", handleLoginUser);
 route.post("/logout", handleLogoutUser);
-route.get('verify-token',verifyToken);
+route.get('/verify-token',verifyToken);
 export default route;
