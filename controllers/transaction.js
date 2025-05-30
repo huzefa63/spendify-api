@@ -199,7 +199,7 @@ export const getCategoryTransaction = catchAsync(async (req, res, next) => {
   const {transactionType = 'income',year = new Date().getFullYear().toString()} = req.query;
   const transactions = await Transaction.aggregate([
     {
-      $match:{user:req.user._id,transactionType:{$eq:transactionType},year}
+      $match:{user:req.user._id,transactionType:{$eq:transactionType},year:{$eq:year}}
     },
     {
       $group:{
