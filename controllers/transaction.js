@@ -196,10 +196,12 @@ export const getFinancialStats = catchAsync(async (req, res, next) => {
 });
 
 export const getCategoryTransaction = catchAsync(async (req, res, next) => {
-  const {transactionType = 'income',year = new Date().getFullYear().toString()} = req.query;
+  const {transactionType = 'income',year = new Date().getFullYear().toString(),monthNumber} = req.query;
+  let filterWithMonth;
+  if(monthNumber !== 'fullYear') filterWithMonth = {monthNumber:{$eq:Number(monthNumber)}}; 
   const transactions = await Transaction.aggregate([
     {
-      $match:{user:req.user._id,transactionType:{$eq:transactionType},year:{$eq:year}}
+      $match:{user:req.user._id,transactionType:{$eq:transactionType},year:{$eq:year},...filterWithMonth}
     },
     {
       $group:{
